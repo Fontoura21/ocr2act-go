@@ -2,19 +2,30 @@ package reference
 
 import (
 	"context"
+	_ "embed"
 	"encoding/json"
 	"log/slog"
 	"net/http"
 )
 
+// openAPI documenta o contrato da API de referência.
+//
+//go:embed openapi.yaml
+var openAPI []byte
+
 // Routes registra a API de referência em mux:
 //
 //	GET /ref/registros/matricula/{matricula}
 //	GET /ref/registros/cpf/{cpf}
+//	GET /openapi.yaml
 //
 // As respostas seguem o contrato do protótipo em Python (FastAPI): 200 com o
 // registro, 404 com {"detail": ...} quando não há exatamente um registro.
 func Routes(mux *http.ServeMux, src Source, log *slog.Logger) {
+	mux.HandleFunc("GET /openapi.yaml", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/yaml")
+		_, _ = w.Write(openAPI)
+	})
 	mux.HandleFunc("GET /ref/registros/matricula/{matricula}", func(w http.ResponseWriter, r *http.Request) {
 		serve(w, r, log, "registro não encontrado", func(ctx context.Context) ([]Entry, error) {
 			return src.ByMatricula(ctx, r.PathValue("matricula"))

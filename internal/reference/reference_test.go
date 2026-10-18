@@ -13,6 +13,8 @@ import (
 	"strings"
 	"testing"
 
+	"go.yaml.in/yaml/v3"
+
 	"github.com/Fontoura21/ocr2act-go/internal/record"
 )
 
@@ -210,6 +212,33 @@ func TestRoutesFieldOrderMatchesContract(t *testing.T) {
 	want := "matricula cpf nome data_nascimento hora_nascimento sexo municipio uf mae pai data_registro cns sintetico"
 	if got := strings.Join(keys, " "); got != want {
 		t.Errorf("campos = %s, want %s", got, want)
+	}
+}
+
+func TestOpenAPIDocumentsTheRoutes(t *testing.T) {
+	srv := newServer(t, fake{})
+	resp, err := http.Get(srv.URL + "/openapi.yaml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer resp.Body.Close()
+	if ct := resp.Header.Get("Content-Type"); resp.StatusCode != http.StatusOK || ct != "application/yaml" {
+		t.Fatalf("GET /openapi.yaml = %d %s", resp.StatusCode, ct)
+	}
+	var spec struct {
+		OpenAPI string         `yaml:"openapi"`
+		Paths   map[string]any `yaml:"paths"`
+	}
+	if err := yaml.NewDecoder(resp.Body).Decode(&spec); err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range []string{"/ref/registros/matricula/{matricula}", "/ref/registros/cpf/{cpf}", "/healthz"} {
+		if _, ok := spec.Paths[p]; !ok {
+			t.Errorf("a especificação não documenta %s", p)
+		}
+	}
+	if !strings.HasPrefix(spec.OpenAPI, "3.") {
+		t.Errorf("openapi = %q", spec.OpenAPI)
 	}
 }
 

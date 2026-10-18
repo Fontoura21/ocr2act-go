@@ -1,0 +1,142 @@
+openapi: 3.1.0
+info:
+  title: OCR2Act — fonte de referência (Mini-CIC sintético)
+  version: 0.1.0
+  description: |
+    Consulta de registros de nascimento sintéticos por chave exata, no contrato
+    do Mini-CIC. Não existe busca por nome, para evitar enumeração de pessoas.
+    Todos os registros são gerados por seed e marcados com `sintetico: 1`.
+paths:
+  /ref/registros/matricula/{matricula}:
+    get:
+      operationId: registroPorMatricula
+      summary: Registro pela matrícula
+      parameters:
+        - name: matricula
+          in: path
+          required: true
+          description: Matrícula de 32 dígitos, sem espaços.
+          schema:
+            type: string
+            pattern: "^[0-9]{32}$"
+          example: "83879701552021100036024008667405"
+      responses:
+        "200":
+          description: Exatamente um registro com a matrícula.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Registro"
+        "404":
+          description: Nenhum registro com a matrícula.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+              example:
+                detail: registro não encontrado
+        "500":
+          $ref: "#/components/responses/ErroInterno"
+  /ref/registros/cpf/{cpf}:
+    get:
+      operationId: registroPorCPF
+      summary: Registro pelo CPF
+      parameters:
+        - name: cpf
+          in: path
+          required: true
+          description: CPF de 11 dígitos, sem pontuação.
+          schema:
+            type: string
+            pattern: "^[0-9]{11}$"
+          example: "34131647591"
+      responses:
+        "200":
+          description: Exatamente um registro com o CPF.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Registro"
+        "404":
+          description: Nenhum registro, ou mais de um, com o CPF. Um CPF ambíguo nunca escolhe registro.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Erro"
+              example:
+                detail: registro não encontrado ou ambíguo
+        "500":
+          $ref: "#/components/responses/ErroInterno"
+  /healthz:
+    get:
+      operationId: saude
+      summary: Verificação de saúde do serviço
+      responses:
+        "200":
+          description: Serviço no ar.
+          content:
+            text/plain:
+              example: ok
+components:
+  responses:
+    ErroInterno:
+      description: Falha ao consultar a base. O detalhe fica só no log do servidor.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Erro"
+          example:
+            detail: erro ao consultar a base de referência
+  schemas:
+    Erro:
+      type: object
+      required: [detail]
+      properties:
+        detail:
+          type: string
+    Registro:
+      type: object
+      required: [matricula, cpf, nome, data_nascimento, hora_nascimento, sexo, municipio, uf, mae, pai, data_registro, cns, sintetico]
+      properties:
+        matricula:
+          type: string
+          example: "83879701552021100036024008667405"
+        cpf:
+          type: string
+          example: "34131647591"
+        nome:
+          type: string
+          example: APOLLO PORTO SOUZA
+        data_nascimento:
+          type: string
+          format: date
+          example: "2021-06-22"
+        hora_nascimento:
+          type: string
+          example: "05:23"
+        sexo:
+          type: string
+          enum: [FEMININO, MASCULINO]
+        municipio:
+          type: string
+          example: DA CRUZ DE GOIÁS
+        uf:
+          type: string
+          example: BA
+        mae:
+          type: string
+          example: BELLA ROCHA PORTO
+        pai:
+          type: string
+          example: YAGO BORGES CAMARGO
+        data_registro:
+          type: string
+          format: date
+          example: "2021-07-05"
+        cns:
+          type: string
+          description: CNS da serventia.
+          example: "838797"
+        sintetico:
+          type: integer
+          enum: [1]
