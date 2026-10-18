@@ -1,0 +1,9 @@
+# Saídas geradas a partir do conjunto
+/data/resultados/
+/data/metricas.json
+/data/auditoria.jsonl
+
+# Binários
+/bin/
+
+.DS_Store

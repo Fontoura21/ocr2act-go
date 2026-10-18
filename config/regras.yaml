@@ -1,0 +1,28 @@
+# Limiares e regras do OCR2Act (versionados, fora do código; RNF06).
+# Valores iniciais da Entrega Parcial 1, ainda não calibrados.
+versao: "0.1.0"
+
+motores:
+  tesseract:
+    confianca_alta: 0.90
+    confianca_baixa: 0.60
+
+# Qualidade da captura: variância do Laplaciano abaixo disso manda o documento para revisão.
+qualidade:
+  nitidez_minima: 100.0  # provisório: calibrar no conjunto de calibração
+
+# Mapa inicial de confusões visuais (valor correto -> leituras confundíveis).
+# Só essas substituições sustentam a classe "provável erro de OCR".
+confusoes:
+  "0": ["O", "D", "o", "Q"]
+  "1": ["I", "l", "i", "|"]
+  "5": ["S", "s"]
+  "8": ["B"]
+  "2": ["Z", "z"]
+  "6": ["G"]
+
+# Partículas com peso reduzido na comparação de nomes.
+particulas: ["DE", "DA", "DO", "DAS", "DOS", "E"]
+
+# Quantos campos críticos com divergência real disparam o alerta de documento de outra pessoa.
+alerta_outra_pessoa_min_campos: 2
