@@ -3,13 +3,14 @@
 package ocr
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"image"
 	"strings"
 	"unicode"
+
+	"github.com/Fontoura21/ocr2act-go/internal/jsonenc"
 )
 
 // Engine lê uma linha de texto de uma região em tons de cinza.
@@ -26,13 +27,7 @@ type Word struct {
 
 // MarshalJSON codifica a palavra como [texto, confiança].
 func (w Word) MarshalJSON() ([]byte, error) {
-	var buf bytes.Buffer
-	enc := json.NewEncoder(&buf)
-	enc.SetEscapeHTML(false)
-	if err := enc.Encode([2]any{w.Text, w.Confidence}); err != nil {
-		return nil, err
-	}
-	return bytes.TrimRight(buf.Bytes(), "\n"), nil
+	return jsonenc.Marshal([2]any{w.Text, w.Confidence})
 }
 
 // UnmarshalJSON decodifica o par [texto, confiança].

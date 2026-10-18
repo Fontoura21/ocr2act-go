@@ -10,6 +10,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/Fontoura21/ocr2act-go/internal/jsonenc"
 	"github.com/Fontoura21/ocr2act-go/internal/layout"
 	"github.com/Fontoura21/ocr2act-go/internal/ocr"
 	"github.com/Fontoura21/ocr2act-go/internal/rules"
@@ -65,22 +66,22 @@ func (fs Fields) Get(name string) (Field, bool) {
 
 // MarshalJSON codifica os campos como objeto, na ordem do template.
 func (fs Fields) MarshalJSON() ([]byte, error) {
-	var buf bytes.Buffer
-	buf.WriteByte('{')
+	buf := []byte{'{'}
 	for i, f := range fs {
 		if i > 0 {
-			buf.WriteByte(',')
+			buf = append(buf, ',')
 		}
-		if err := encode(&buf, f.Name); err != nil {
+		key, err := jsonenc.Marshal(f.Name)
+		if err != nil {
 			return nil, err
 		}
-		buf.WriteByte(':')
-		if err := encode(&buf, f); err != nil {
+		value, err := jsonenc.Marshal(f)
+		if err != nil {
 			return nil, err
 		}
+		buf = append(append(append(buf, key...), ':'), value...)
 	}
-	buf.WriteByte('}')
-	return buf.Bytes(), nil
+	return append(buf, '}'), nil
 }
 
 // UnmarshalJSON decodifica o objeto de campos preservando a ordem.
@@ -105,17 +106,6 @@ func (fs *Fields) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// encode grava v em JSON sem escapar <, > e &, como o json.dumps do Python.
-func encode(buf *bytes.Buffer, v any) error {
-	enc := json.NewEncoder(buf)
-	enc.SetEscapeHTML(false)
-	if err := enc.Encode(v); err != nil {
-		return err
-	}
-	buf.Truncate(buf.Len() - 1) // tira o \n que o Encoder acrescenta
-	return nil
-}
-
 // WriteResult grava o resultado em dir/<doc_id>.json. A escrita passa por um
 // arquivo temporário renomeado no fim, para que uma interrupção não deixe um
 // resultado pela metade.
@@ -125,10 +115,7 @@ func WriteResult(dir string, r *Result) error {
 		return err
 	}
 	defer os.Remove(tmp.Name()) // sem efeito depois do Rename
-	enc := json.NewEncoder(tmp)
-	enc.SetEscapeHTML(false)
-	enc.SetIndent("", " ")
-	if err := enc.Encode(r); err != nil {
+	if err := jsonenc.Write(tmp, r); err != nil {
 		return errors.Join(err, tmp.Close())
 	}
 	if err := tmp.Close(); err != nil {
