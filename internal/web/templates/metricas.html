@@ -1,0 +1,29 @@
+{{define "titulo"}}Métricas · OCR2Act{{end}}
+{{define "conteudo"}}
+<h1>Métricas contra a verdade de referência</h1>
+<p class="sub">Calculadas automaticamente a partir dos rótulos do gerador (RF12). Divisão por registro: 40% calibração, 60% avaliação.</p>
+{{$classes := .Classes}}
+{{range .Report}}
+<div class="cartao">
+  <h2 style="margin-top:0">{{.Name}} <span class="muted">({{.Fields}} campos)</span></h2>
+  <table style="max-width:720px">
+    <tr><td>Falso compatível crítico (meta: zero)</td>
+        <td class="{{if eq .FalseCompatibleCritical 0}}ok{{else}}falha{{end}}">{{.FalseCompatibleCritical}}</td></tr>
+    <tr><td>Revocação de divergência real</td><td>{{with .RealDivergenceRecall}}{{.}}{{else}}-{{end}}</td></tr>
+    <tr><td>Decisões aceitáveis</td><td>{{with .AcceptableDecisions}}{{.}}{{else}}-{{end}}</td></tr>
+    <tr><td>CER por nível de degradação</td><td class="mono">{{range .CERByLevel}}{{.Key}}: {{.Value}} &nbsp; {{end}}</td></tr>
+  </table>
+  <h2>Matriz de confusão (linha: situação verdadeira · coluna: classe atribuída)</h2>
+  <table style="max-width:900px">
+    <tr><th>verdade</th>{{range $classes}}<th style="color:{{.Color}}">{{.Label}}</th>{{end}}</tr>
+    {{range .Matrix}}
+    <tr><td class="mono">{{.Key}}</td>{{range .Value}}<td class="mono">{{.Value}}</td>{{end}}</tr>
+    {{end}}
+  </table>
+  <h2>Acurácia de leitura por campo (texto bruto igual ao impresso)</h2>
+  <p class="mono">{{range .AccuracyByField}}{{.Key}}: {{.Value}} &nbsp; {{end}}</p>
+</div>
+{{else}}
+<div class="cartao">Ainda não há resultados com verdade de referência. Rode <span class="mono">ocr2act processar</span> e recarregue a página.</div>
+{{end}}
+{{end}}

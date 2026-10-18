@@ -1,0 +1,21 @@
+{{define "titulo"}}API de referência · OCR2Act{{end}}
+{{define "conteudo"}}
+<h1>API de referência (Mini-CIC sintético)</h1>
+<p class="sub">Consulta por chave exata. Não existe busca por nome, para evitar enumeração de pessoas.
+  A especificação completa está em <a href="/openapi.yaml">/openapi.yaml</a> (OpenAPI 3.1).</p>
+<div class="cartao">
+  <h2 style="margin-top:0"><span class="mono">GET /ref/registros/matricula/{matricula}</span></h2>
+  <p>Registro pela matrícula de 32 dígitos. Responde 404 quando não há registro.</p>
+  <p class="mono">curl http://localhost:8000/ref/registros/matricula/83879701552021100036024008667405</p>
+</div>
+<div class="cartao">
+  <h2 style="margin-top:0"><span class="mono">GET /ref/registros/cpf/{cpf}</span></h2>
+  <p>Registro pelo CPF de 11 dígitos. Responde 404 quando não há registro ou quando há mais de um: um CPF ambíguo nunca escolhe registro.</p>
+  <p class="mono">curl http://localhost:8000/ref/registros/cpf/34131647591</p>
+</div>
+<div class="cartao">
+  <h2 style="margin-top:0">Erros</h2>
+  <p>As respostas de erro seguem o formato do protótipo em Python: <span class="mono">{"detail": "registro não encontrado"}</span>.
+    Falhas da base respondem 500 sem expor detalhes, que ficam no log do servidor.</p>
+</div>
+{{end}}

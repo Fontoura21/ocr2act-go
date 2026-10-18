@@ -1,0 +1,28 @@
+{{define "titulo"}}OCR2Act{{end}}
+{{define "conteudo"}}
+<h1>Documentos processados</h1>
+{{if .Docs}}
+<p class="sub">{{len .Docs}} certidões sintéticas (limpa, degradação leve e forte). Cada linha mostra quantos campos caíram em cada classe.</p>
+<table>
+  <tr>
+    <th>Documento</th><th>Captura</th><th>Nitidez</th>
+    {{range .Classes}}<th>{{.Label}}</th>{{end}}
+    <th>Alertas</th><th class="muted">Cenário (verdade, só avaliação)</th>
+  </tr>
+  {{range $d := .Docs}}
+  <tr>
+    <td><a href="/doc/{{$d.Result.DocID}}" class="mono">{{$d.Result.DocID}}</a></td>
+    <td>{{with $d.Truth}}{{.Level}}{{end}}</td>
+    <td class="mono">{{printf "%.0f" $d.Result.Sharpness}}</td>
+    {{range $.Classes}}{{$n := index $d.Counts .Class}}
+    <td><span class="pill{{if not $n}} zero{{end}}" style="background:{{.Color}}">{{$n}}</span></td>
+    {{end}}
+    <td>{{with $d.Result.Alerts}}<span class="falha">⚠ {{len .}}</span>{{end}}</td>
+    <td class="muted">{{with $d.Truth}}{{.Group}}{{with .Type}} · {{.}}{{end}} · {{.Split}}{{end}}</td>
+  </tr>
+  {{end}}
+</table>
+{{else}}
+<div class="cartao">Nenhum documento processado ainda. Rode <span class="mono">ocr2act processar</span> e recarregue a página.</div>
+{{end}}
+{{end}}

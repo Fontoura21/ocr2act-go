@@ -1,0 +1,23 @@
+{{define "titulo"}}Auditoria · OCR2Act{{end}}
+{{define "conteudo"}}
+<h1>Trilha de auditoria</h1>
+<p class="sub">JSONL só de acréscimo; cada evento guarda o hash do anterior.
+  Verificação: <span class="{{if .Verification.OK}}ok{{else}}falha{{end}}">{{if .Verification.OK}}íntegra{{else}}ALTERADA{{end}}</span> ({{.Verification.Message}})</p>
+<table>
+  <tr><th>Quando</th><th>Documento</th><th>Campo</th><th>Ação</th><th>Classe sugerida</th><th>Regra</th><th>Hash</th><th>Anterior</th></tr>
+  {{range .Events}}
+  <tr>
+    <td class="mono">{{.TS}}</td>
+    <td><a class="mono" href="/doc/{{.DocID}}#{{.Field}}">{{.DocID}}</a></td>
+    <td>{{.Field}}</td>
+    <td><b>{{.Action}}</b>{{with .CorrectedValue}} → <span class="mono">{{.}}</span>{{end}}</td>
+    <td>{{.SuggestedClass}}</td>
+    <td class="mono">{{.Rule}}</td>
+    <td class="mono">{{slice .Hash 0 12}}…</td>
+    <td class="mono">{{slice .PrevHash 0 12}}…</td>
+  </tr>
+  {{else}}
+  <tr><td colspan="8" class="muted">Nenhuma ação de revisão registrada ainda.</td></tr>
+  {{end}}
+</table>
+{{end}}

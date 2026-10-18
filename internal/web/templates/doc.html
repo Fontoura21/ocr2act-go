@@ -1,0 +1,111 @@
+{{define "titulo"}}{{.R.DocID}} · OCR2Act{{end}}
+{{define "conteudo"}}
+<style>
+  .grade { display:grid; grid-template-columns: minmax(300px, 760px) 1fr; gap:20px; align-items:start; }
+  .fixo { position:sticky; top:12px; }
+  .fixo img { width:100%; border:1px solid var(--borda); border-radius:6px; background:#fff; }
+  .campo { border-left:5px solid var(--borda); }
+  .campo h3 { margin:0; font-size:15px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .recorte { display:block; max-width:100%; margin:10px 0; border:1px solid var(--borda); border-radius:4px; }
+  .kv { display:grid; grid-template-columns: 130px 1fr; gap:4px 12px; margin:6px 0 10px; }
+  .kv div:nth-child(odd) { color:var(--suave); font-size:13px; }
+  form { display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding-top:10px; border-top:1px dashed var(--borda); }
+  form input[type=text] { padding:5px 8px; border:1px solid var(--borda); border-radius:4px; min-width:240px; }
+  button { padding:6px 14px; border:0; border-radius:4px; background:#1d2330; color:#fff; cursor:pointer; }
+  .feito { background:#eef7f0; border:1px solid #cde7d4; padding:6px 10px; border-radius:6px; font-size:13px; margin-top:8px; }
+  details { margin-top:8px; } summary { cursor:pointer; color:var(--suave); font-size:13px; }
+  .critico { background:#1d2330; }
+  @media (max-width: 900px) { .grade { grid-template-columns: 1fr; } .fixo { position:static; } }
+</style>
+
+<h1>{{.R.DocID}}</h1>
+<p class="sub">
+  Tipo: certidão de nascimento · nitidez {{printf "%.0f" .R.Sharpness}}
+  {{if not .R.QualityOK}}<span class="falha">(abaixo do limiar)</span>{{end}}
+  · busca na base: <b>{{.R.Lookup}}</b> · regras v{{.R.RulesVersion}} · {{.R.Seconds}} s
+  · <span class="mono">sha256 {{slice .R.SHA256 0 16}}…</span>
+</p>
+{{range .R.Alerts}}<div class="alerta">⚠ {{.}}</div>{{end}}
+
+<div class="grade">
+  <div class="fixo">
+    <img src="/img/{{.R.DocID}}/sobreposicao.png" alt="Documento com regiões coloridas pela decisão">
+    <p class="muted">
+      {{range .Classes}}<span class="badge" style="background:{{.Color}}">{{.Label}}</span> {{end}}
+    </p>
+  </div>
+
+  <div>
+    <div class="cartao">
+      <h2 style="margin-top:0">Formulário pré-preenchido</h2>
+      <table>
+        <tr><th>Campo</th><th>Valor sugerido</th><th>Decisão</th><th>Situação</th></tr>
+        {{range .Fields}}
+        <tr>
+          <td><a href="#{{.Name}}">{{.Label}}</a>{{if .Critical}} <span class="badge critico">crítico</span>{{end}}</td>
+          <td class="mono">
+            {{if eq .Class.Class "revisao"}}<span class="muted">bloqueado até ação humana</span>
+            {{else if eq .Class.Class "erro_ocr"}}{{with .BaseValue}}{{.}}{{end}} <span class="muted">(da base)</span>
+            {{else}}{{.Raw}}{{end}}
+          </td>
+          <td><span class="badge" style="background:{{.Class.Color}}">{{.Class.Label}}</span></td>
+          <td>
+            {{if .Action}}<span class="ok">{{.Action.Action}}</span>
+            {{else if or .Critical (ne .Class.Class "compativel")}}<span class="falha">pendente</span>
+            {{else}}<span class="muted">sugerido</span>{{end}}
+          </td>
+        </tr>
+        {{end}}
+      </table>
+      <p class="muted">Nenhum campo crítico é confirmado sem ação humana. Não existe "aceitar tudo".</p>
+    </div>
+
+    {{$r := .R}}{{$truth := .Truth}}
+    {{range .Fields}}
+    <div class="cartao campo" id="{{.Name}}" style="border-left-color:{{.Class.Color}}">
+      <h3>
+        {{.Label}}
+        {{if .Critical}}<span class="badge critico">crítico</span>{{end}}
+        <span class="badge" style="background:{{.Class.Color}}">{{.Class.Label}}</span>
+      </h3>
+      <img class="recorte" src="/img/{{$r.DocID}}/recorte/{{.Name}}.png" alt="Recorte da região {{.Label}}">
+      <div class="kv">
+        <div>Valor lido</div><div class="mono">{{or .Raw "∅"}} <span class="muted">(confiança {{printf "%.2f" .Confidence}})</span></div>
+        <div>Valor na base</div><div class="mono">{{with .BaseValue}}{{.}}{{else}}∅ sem registro{{end}}</div>
+        <div>Motivo</div><div>{{.Decision.Reason}} <span class="muted mono">[{{.Decision.Rule}}]</span></div>
+      </div>
+      <details>
+        <summary>Proveniência</summary>
+        <div class="kv mono">
+          <div>bbox</div><div>{{.BBox}}</div>
+          <div>motor</div><div>{{.Engine}} {{.Version}}</div>
+          <div>normalizado</div><div>{{with .Normalized}}{{.}}{{else}}∅{{end}}</div>
+          <div>transformações</div><div>{{with .Transforms}}{{join . ", "}}{{else}}nenhuma{{end}}</div>
+          <div>palavras</div><div>{{range .Words}}{{.Text}} ({{.Confidence}}) {{end}}</div>
+        </div>
+      </details>
+      {{if $truth}}
+      <details>
+        <summary>Verdade de referência (só para avaliação)</summary>
+        <div class="kv mono">
+          <div>impresso</div><div>{{.Printed}}</div>
+          <div>cenário</div><div>{{$truth.Group}} {{with $truth.Type}}{{.}}{{end}} {{if .Changed}}<b>(campo alterado)</b>{{end}}</div>
+        </div>
+      </details>
+      {{end}}
+
+      {{with .Action}}
+      <div class="feito">Revisor: <b>{{.Action}}</b>{{with .CorrectedValue}} → <span class="mono">{{.}}</span>{{end}} em {{.TS}} · <span class="mono">hash {{slice .Hash 0 12}}…</span></div>
+      {{end}}
+      <form method="post" action="/doc/{{$r.DocID}}/campo/{{.Name}}">
+        <label><input type="radio" name="acao" value="aceitar" required> aceitar</label>
+        <label><input type="radio" name="acao" value="corrigir"> corrigir</label>
+        <label><input type="radio" name="acao" value="rejeitar"> rejeitar</label>
+        <input type="text" name="valor" placeholder="valor corrigido (se corrigir)">
+        <button type="submit">Registrar</button>
+      </form>
+    </div>
+    {{end}}
+  </div>
+</div>
+{{end}}

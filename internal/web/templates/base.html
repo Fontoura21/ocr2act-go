@@ -1,0 +1,43 @@
+{{define "base"}}<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{template "titulo" .}}</title>
+<style>
+  :root { --fundo:#f6f7f9; --cartao:#fff; --texto:#1d2330; --suave:#5f6b7a; --borda:#dde2e8; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; background:var(--fundo); color:var(--texto); }
+  header { background:#1d2330; color:#fff; padding:12px 24px; display:flex; gap:24px; align-items:center; flex-wrap:wrap; }
+  header b { font-size:17px; } header a { color:#cfd6e0; text-decoration:none; } header a:hover { color:#fff; }
+  header .tag { margin-left:auto; font-size:12px; color:#9aa6b5; }
+  main { padding:20px 24px; max-width:1500px; margin:0 auto; }
+  h1 { font-size:22px; margin:0 0 4px; } h2 { font-size:17px; margin:20px 0 8px; }
+  .sub { color:var(--suave); margin:0 0 16px; }
+  table { border-collapse:collapse; width:100%; background:var(--cartao); }
+  th, td { text-align:left; padding:7px 10px; border-bottom:1px solid var(--borda); vertical-align:top; }
+  th { font-size:12px; text-transform:uppercase; letter-spacing:.03em; color:var(--suave); background:#fafbfc; }
+  .badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:12px; font-weight:600; color:#fff; white-space:nowrap; }
+  .pill { display:inline-block; min-width:26px; text-align:center; padding:1px 6px; border-radius:8px; font-size:12px; font-weight:600; color:#fff; }
+  .pill.zero { background:#e4e7eb !important; color:#9aa6b5; }
+  .cartao { background:var(--cartao); border:1px solid var(--borda); border-radius:8px; padding:14px 16px; margin-bottom:14px; }
+  .alerta { background:#fdecea; border:1px solid #f5c2c0; color:#8a1c1c; padding:10px 14px; border-radius:8px; margin-bottom:12px; }
+  .ok { color:#1a7f37; font-weight:600; } .falha { color:#c62828; font-weight:600; }
+  .mono { font-family: ui-monospace, Menlo, monospace; font-size:13px; }
+  .muted { color:var(--suave); font-size:13px; }
+  a { color:#2457c5; }
+</style>
+</head>
+<body>
+<header>
+  <b>OCR2Act</b>
+  <a href="/">Documentos</a>
+  <a href="/metricas">Métricas</a>
+  <a href="/auditoria">Auditoria</a>
+  <a href="/docs">API de referência</a>
+  <span class="tag">INE5448 · PoC OCR-08 · dados 100% sintéticos</span>
+</header>
+<main>{{template "conteudo" .}}</main>
+</body>
+</html>
+{{end}}
