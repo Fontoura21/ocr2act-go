@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Lint e testes
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - name: Instala o Tesseract
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr
+      - name: Lint
+        run: make lint
+      - name: Testes
+        run: go test -race -count=1 ./...
+      - name: Vulnerabilidades
+        run: make vuln
+
+  docker:
+    name: Imagens Docker
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Constrói as imagens
+        run: make docker
+      - name: Testa o serviço de referência
+        run: |
+          docker run -d --name referencia -p 8080:8080 ocr2act-referencia
+          for _ in $(seq 1 30); do curl -fsS localhost:8080/healthz && break; sleep 1; done
+          curl -fsS localhost:8080/ref/registros/cpf/34131647591 | grep -q '"nome":"APOLLO PORTO SOUZA"'
+          test "$(curl -s -o /dev/null -w '%{http_code}' localhost:8080/ref/registros/cpf/00000000000)" = 404
+      - name: Processa uma certidão na imagem completa
+        run: docker run --rm ocr2act ocr2act processar R004_limpa | grep -q ALERTA
+      - name: Tamanho das imagens
+        run: docker image ls 'ocr2act*' --format '{{.Repository}} {{.Size}}'

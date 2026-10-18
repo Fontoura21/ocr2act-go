@@ -1,0 +1,9 @@
+.git
+.github
+bin
+data/resultados
+data/metricas.json
+data/auditoria.jsonl
+**/testdata
+**/*_test.go
+*.md
