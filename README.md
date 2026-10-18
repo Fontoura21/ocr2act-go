@@ -89,7 +89,7 @@ docker build --target referencia -t ocr2act-referencia .
 docker run --rm -p 8080:8080 ocr2act-referencia   # só a API de referência
 ```
 
-A imagem de referência tem só o binário estático e a base, sem shell nem gerenciador de pacotes, e ocupa 22 MB. O serviço escuta em `:$PORT`, desliga de forma graciosa no `SIGTERM` e grava logs em JSON com as chaves do Cloud Logging, então segue o contrato do Cloud Run.
+A imagem de referência tem só o binário estático e a base, sem shell nem gerenciador de pacotes, e ocupa 13,5 MB. O serviço escuta em `:$PORT`, desliga de forma graciosa no `SIGTERM` e grava logs em JSON com as chaves do Cloud Logging, então segue o contrato do Cloud Run.
 
 ## Arquitetura
 
