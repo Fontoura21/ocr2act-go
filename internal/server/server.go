@@ -104,8 +104,8 @@ func Logging(log *slog.Logger, h http.Handler) http.Handler {
 		rec := &statusRecorder{ResponseWriter: w, status: http.StatusOK}
 		h.ServeHTTP(rec, r)
 		log.LogAttrs(r.Context(), slog.LevelInfo, "requisição",
-			slog.String("metodo", r.Method), slog.String("caminho", r.URL.Path),
-			slog.Int("status", rec.status), slog.Duration("duracao", time.Since(start)))
+			slog.String("metodo", r.Method), slog.String("caminho", r.URL.Path), slog.Int("status", rec.status),
+			slog.Float64("duracao_ms", float64(time.Since(start).Microseconds())/1000))
 	})
 }
 
