@@ -1,0 +1,408 @@
+{
+ "doc_id": "R004_limpa",
+ "arquivo": "R004_limpa.png",
+ "sha256": "322e50325b4168d6762456cf01ccf6bac775e60f5ab3062e475f35b34d2f3f29",
+ "nitidez": 2955.9,
+ "qualidade_ok": true,
+ "tipo_documental": "nascimento",
+ "busca_base": "matricula",
+ "matricula_base_mascarada": "***.489.325-**",
+ "versao_regras": "0.1.0",
+ "campos": {
+  "nome": {
+   "rotulo": "NOME",
+   "critico": true,
+   "tipo": "nome",
+   "bbox": [
+    85,
+    361,
+    1155,
+    405
+   ],
+   "bruto": "JULIA FOGAÇA FERREIRA",
+   "normalizado": "JULIA FOGACA FERREIRA",
+   "transformacoes": [
+    "remove_acentos"
+   ],
+   "confianca": 0.95,
+   "palavras": [
+    [
+     "JULIA",
+     0.95
+    ],
+    [
+     "FOGAÇA",
+     0.96
+    ],
+    [
+     "FERREIRA",
+     0.96
+    ]
+   ],
+   "motor": "tesseract",
+   "versao": "5.5.3",
+   "valor_base": "EDUARDO FERNANDES DA MOTA",
+   "decisao": {
+    "classe": "divergencia_real",
+    "regra": "nome_tokens_confianca_alta",
+    "motivo": "na base e não lido: EDUARDO FERNANDES MOTA; lido e não na base: JULIA FOGACA FERREIRA (confiança 0.95)"
+   }
+  },
+  "matricula": {
+   "rotulo": "MATRÍCULA",
+   "critico": true,
+   "tipo": "identificador",
+   "bbox": [
+    85,
+    461,
+    1155,
+    505
+   ],
+   "bruto": "854639 01 55 2015 1 00135 257 0099872 59",
+   "normalizado": "85463901552015100135257009987259",
+   "transformacoes": [
+    "remove_pontuacao_e_espacos"
+   ],
+   "confianca": 0.94,
+   "palavras": [
+    [
+     "854639",
+     0.96
+    ],
+    [
+     "01",
+     0.96
+    ],
+    [
+     "55",
+     0.95
+    ],
+    [
+     "2015",
+     0.95
+    ],
+    [
+     "1",
+     0.96
+    ],
+    [
+     "00135",
+     0.96
+    ],
+    [
+     "257",
+     0.96
+    ],
+    [
+     "0099872",
+     0.94
+    ],
+    [
+     "59",
+     0.94
+    ]
+   ],
+   "motor": "tesseract",
+   "versao": "5.5.3",
+   "valor_base": "854639 01 55 2015 1 00135 257 0099872 59",
+   "decisao": {
+    "classe": "compativel",
+    "regra": "id_igual",
+    "motivo": "igual ao valor da base"
+   }
+  },
+  "cpf": {
+   "rotulo": "CPF",
+   "critico": true,
+   "tipo": "identificador",
+   "bbox": [
+    85,
+    561,
+    515,
+    605
+   ],
+   "bruto": "430.391.171-22",
+   "normalizado": "43039117122",
+   "transformacoes": [
+    "remove_pontuacao_e_espacos"
+   ],
+   "confianca": 0.89,
+   "palavras": [
+    [
+     "430.391.171-22",
+     0.89
+    ]
+   ],
+   "motor": "tesseract",
+   "versao": "5.5.3",
+   "valor_base": "281.489.325-49",
+   "decisao": {
+    "classe": "revisao",
+    "regra": "id_sem_evidencia",
+    "motivo": "DV válido, confiança 0.89; diferença não explicada só pelo mapa de confusão"
+   }
+  },
+  "data_nascimento": {
+   "rotulo": "DATA DE NASCIMENTO",
+   "critico": true,
+   "tipo": "data",
+   "bbox": [
+    565,
+    561,
+    895,
+    605
+   ],
+   "bruto": "19/09/2021",
+   "normalizado": "2021-09-19",
+   "transformacoes": [
+    "ddmmaaaa_para_iso8601"
+   ],
+   "confianca": 0.96,
+   "palavras": [
+    [
+     "19/09/2021",
+     0.96
+    ]
+   ],
+   "motor": "tesseract",
+   "versao": "5.5.3",
+   "valor_base": "14/01/2015",
+   "decisao": {
+    "classe": "divergencia_real",
+    "regra": "data_varios_digitos",
+    "motivo": "data válida que difere em 4 dígitos, confiança 0.96"
+   }
+  },
+  "hora_nascimento": {
+   "rotulo": "HORA",
+   "critico": false,
+   "tipo": "exato",
+   "bbox": [
+    945,
+    561,
+    1155,
+    605
+   ],
+   "bruto": "05:34",
+   "normalizado": "05:34",
+   "transformacoes": [],
+   "confianca": 0.96,
+   "palavras": [
+    [
+     "05:34",
+     0.96
+    ]
+   ],
+   "motor": "tesseract",
+   "versao": "5.5.3",
+   "valor_base": "05:34",
+   "decisao": {
+    "classe": "compativel",
+    "regra": "exato_igual",
+    "motivo": "igual após canonização"
+   }
+  },
+  "sexo": {
+   "rotulo": "SEXO",
+   "critico": false,
+   "tipo": "exato",
+   "bbox": [
+    85,
+    661,
+    415,
+    705
+   ],
+   "bruto": "MASCULINO",
+   "normalizado": "MASCULINO",
+   "transformacoes": [],
+   "confianca": 0.96,
+   "palavras": [
+    [
+     "MASCULINO",
+     0.96
+    ]
+   ],
+   "motor": "tesseract",
+   "versao": "5.5.3",
+   "valor_base": "MASCULINO",
+   "decisao": {
+    "classe": "compativel",
+    "regra": "exato_igual",
+    "motivo": "igual após canonização"
+   }
+  },
+  "municipio_uf": {
+   "rotulo": "MUNICÍPIO DE NASCIMENTO / UF",
+   "critico": false,
+   "tipo": "exato",
+   "bbox": [
+    465,
+    661,
+    1155,
+    705
+   ],
+   "bruto": "TEIXEIRA/MT",
+   "normalizado": "TEIXEIRA/MT",
+   "transformacoes": [],
+   "confianca": 0.9,
+   "palavras": [
+    [
+     "TEIXEIRA/MT",
+     0.9
+    ]
+   ],
+   "motor": "tesseract",
+   "versao": "5.5.3",
+   "valor_base": "TEIXEIRA/MT",
+   "decisao": {
+    "classe": "compativel",
+    "regra": "exato_igual",
+    "motivo": "igual após canonização"
+   }
+  },
+  "mae": {
+   "rotulo": "FILIAÇÃO: MÃE",
+   "critico": true,
+   "tipo": "nome",
+   "bbox": [
+    85,
+    761,
+    1155,
+    805
+   ],
+   "bruto": "ZOE CAMPOS FOGAÇA",
+   "normalizado": "ZOE CAMPOS FOGACA",
+   "transformacoes": [
+    "remove_acentos"
+   ],
+   "confianca": 0.9,
+   "palavras": [
+    [
+     "ZOE",
+     0.9
+    ],
+    [
+     "CAMPOS",
+     0.96
+    ],
+    [
+     "FOGAÇA",
+     0.96
+    ]
+   ],
+   "motor": "tesseract",
+   "versao": "5.5.3",
+   "valor_base": "BELLA BORGES FERNANDES",
+   "decisao": {
+    "classe": "divergencia_real",
+    "regra": "nome_tokens_confianca_alta",
+    "motivo": "na base e não lido: BELLA BORGES FERNANDES; lido e não na base: ZOE CAMPOS FOGACA (confiança 0.90)"
+   }
+  },
+  "pai": {
+   "rotulo": "FILIAÇÃO: PAI",
+   "critico": true,
+   "tipo": "nome",
+   "bbox": [
+    85,
+    861,
+    1155,
+    905
+   ],
+   "bruto": "MARCOS VINICIUS BARROS FERREIRA",
+   "normalizado": "MARCOS VINICIUS BARROS FERREIRA",
+   "transformacoes": [],
+   "confianca": 0.95,
+   "palavras": [
+    [
+     "MARCOS",
+     0.95
+    ],
+    [
+     "VINICIUS",
+     0.96
+    ],
+    [
+     "BARROS",
+     0.96
+    ],
+    [
+     "FERREIRA",
+     0.95
+    ]
+   ],
+   "motor": "tesseract",
+   "versao": "5.5.3",
+   "valor_base": "MATEUS BRITO DA MOTA",
+   "decisao": {
+    "classe": "divergencia_real",
+    "regra": "nome_tokens_confianca_alta",
+    "motivo": "na base e não lido: MATEUS BRITO MOTA; lido e não na base: MARCOS VINICIUS BARROS FERREIRA (confiança 0.95)"
+   }
+  },
+  "data_registro": {
+   "rotulo": "DATA DO REGISTRO",
+   "critico": false,
+   "tipo": "data",
+   "bbox": [
+    85,
+    961,
+    475,
+    1005
+   ],
+   "bruto": "02/03/2015",
+   "normalizado": "2015-03-02",
+   "transformacoes": [
+    "ddmmaaaa_para_iso8601"
+   ],
+   "confianca": 0.96,
+   "palavras": [
+    [
+     "02/03/2015",
+     0.96
+    ]
+   ],
+   "motor": "tesseract",
+   "versao": "5.5.3",
+   "valor_base": "02/03/2015",
+   "decisao": {
+    "classe": "compativel",
+    "regra": "data_igual",
+    "motivo": "igual ao valor da base"
+   }
+  },
+  "cns": {
+   "rotulo": "CNS DA SERVENTIA",
+   "critico": false,
+   "tipo": "exato",
+   "bbox": [
+    525,
+    961,
+    815,
+    1005
+   ],
+   "bruto": "854639",
+   "normalizado": "854639",
+   "transformacoes": [],
+   "confianca": 0.96,
+   "palavras": [
+    [
+     "854639",
+     0.96
+    ]
+   ],
+   "motor": "tesseract",
+   "versao": "5.5.3",
+   "valor_base": "854639",
+   "decisao": {
+    "classe": "compativel",
+    "regra": "exato_igual",
+    "motivo": "igual após canonização"
+   }
+  }
+ },
+ "alertas": [
+  "Possível documento de outra pessoa: 4 campos críticos divergem (nome, data_nascimento, mae, pai). Documento inteiro vai para revisão."
+ ],
+ "tempo_s": 0.68
+}
